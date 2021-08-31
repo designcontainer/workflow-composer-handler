@@ -299,9 +299,9 @@ class GenerateComposerFile {
 	 * @returns {boolean}
 	 */
 	isPluginIgnored(plugin) {
-		const ignore = this.composer.extra.ignore;
-		if (ignore === undefined) return false;
-		return ignore.some((cPlugin) => {
+		if (this.composer.extra === undefined) return false;
+		if (this.composer.extra.ignore === undefined) return false;
+		return this.composer.extra.ignore.some((cPlugin) => {
 			return cPlugin === plugin;
 		});
 	}
