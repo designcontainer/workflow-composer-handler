@@ -154,10 +154,10 @@ class GenerateComposerFile {
 		this.composer = this.composerSkeleton();
 
 		for (const plugin of plugins) {
-			if (await this.isWordPressPlugin(plugin)) {
-				this.addWordPressPlugin(plugin);
-			} else if (await this.isInternalPlugin(plugin)) {
+			if (await this.isInternalPlugin(plugin)) {
 				this.addInternalPlugin(plugin);
+			} else if (await this.isWordPressPlugin(plugin)) {
+				this.addWordPressPlugin(plugin);
 			} else {
 				this.failed.push(plugin);
 			}
@@ -181,10 +181,10 @@ class GenerateComposerFile {
 				console.log(`Plugin is ignored: ${plugin}`);
 			} else if (this.isPluginInComposer(plugin)) {
 				console.log(`Plugin already exists in Composer: ${plugin}`);
-			} else if (await this.isWordPressPlugin(plugin)) {
-				this.addWordPressPlugin(plugin);
 			} else if (await this.isInternalPlugin(plugin)) {
 				this.addInternalPlugin(plugin);
+			} else if (await this.isWordPressPlugin(plugin)) {
+				this.addWordPressPlugin(plugin);
 			} else {
 				this.failed.push(plugin);
 			}
@@ -258,6 +258,7 @@ class GenerateComposerFile {
 	 */
 	addWordPressPlugin(plugin) {
 		this.addObjectIfMissing('repositories');
+		this.addObjectIfMissing('require');
 		// Add wpackagist to repository list if it is missing,
 		if (!this.composer.repositories.some((o) => o.url === 'https://wpackagist.org')) {
 			this.composer.repositories.push({
@@ -279,6 +280,7 @@ class GenerateComposerFile {
 	 */
 	addInternalPlugin(plugin) {
 		this.addObjectIfMissing('repositories');
+		this.addObjectIfMissing('require');
 		this.composer.repositories.push({
 			type: 'vcs',
 			url: `https://github.com/designcontainer/${plugin}`,
