@@ -17620,11 +17620,11 @@ async function run() {
 		await cloneRepo(dir, owner, repo, token, git);
 
 		core.info('Checking if is WordPress repo');
-		if (fs.existsSync(path.join(dir, 'wp-content'))) {
+		if (!fs.existsSync(path.join(dir, 'wp-content'))) {
 			core.setFailed(`Missing folder: wp-content`);
 			return;
 		}
-		if (fs.existsSync(path.join(dir, 'wp-content', 'plugins'))) {
+		if (!fs.existsSync(path.join(dir, 'wp-content', 'plugins'))) {
 			core.setFailed(`Missing folder: wp-content/plugins`);
 			return;
 		}
