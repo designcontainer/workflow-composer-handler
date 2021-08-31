@@ -1,0 +1,53 @@
+{
+	"name": "workflow-composer-handler",
+	"version": "1.0.0",
+	"description": "Tbd.",
+	"main": "lib/index.js",
+	"scripts": {
+		"start": "rimraf ./clones && node lib/index.js",
+		"dev": "DEBUG=simple-git npm start",
+		"package": "ncc build lib/index.js -o dist",
+		"gitAdd": "git add dist/index.js",
+		"gen-readme-toc": "markdown-toc -i README.md",
+		"lint": "eslint --max-warnings 0 .",
+		"lint-fix": "eslint --fix .",
+		"test": "npm run lint && jest"
+	},
+	"pre-commit": [
+		"package",
+		"gitAdd"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/designcontainer/workflow-plugin-updater.git"
+	},
+	"author": "Rostislav Melkumyan <rosti@designcontainer.no>",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/designcontainer/workflow-plugin-updater/issues"
+	},
+	"homepage": "https://github.com/designcontainer/workflow-plugin-updater#readme",
+	"dependencies": {
+		"@actions/core": "^1.2.6",
+		"@actions/github": "^4.0.0",
+		"@octokit/plugin-retry": "^3.0.6",
+		"adm-zip": "^0.5.5",
+		"anzip": "^0.2.0",
+		"await-exec": "^0.1.2",
+		"axios": "^0.21.1",
+		"extract-zip": "^2.0.1",
+		"fs-extra": "^10.0.0",
+		"node-unzip-2": "^0.2.8",
+		"rimraf": "^3.0.2",
+		"simple-git": "^2.40.0",
+		"uuid": "^8.3.2"
+	},
+	"devDependencies": {
+		"@vercel/ncc": "^0.28.6",
+		"eslint": "^7.7.0",
+		"eslint-plugin-jest": "^23.20.0",
+		"eslint-plugin-sonarjs": "^0.5.0",
+		"jest": "^26.4.1",
+		"pre-commit": "^1.2.2"
+	}
+}
