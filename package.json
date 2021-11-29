@@ -30,7 +30,7 @@
 	"dependencies": {
 		"@actions/core": "^1.2.6",
 		"@actions/github": "^4.0.0",
-		"@designcontainer/generate-composer": "^1.0.5",
+		"@designcontainer/generate-composer": "^1.0.6",
 		"@octokit/plugin-retry": "^3.0.6",
 		"adm-zip": "^0.5.5",
 		"anzip": "^0.2.0",
