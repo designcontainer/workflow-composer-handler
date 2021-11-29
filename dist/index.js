@@ -1528,7 +1528,10 @@ class GenerateComposerFile {
 		this.name = name;
 		this.token = token;
 		this.composer = null;
+		this.added = [];
 		this.failed = [];
+		this.exists = [];
+		this.ignored = [];
 	}
 
 	/**
@@ -1549,7 +1552,7 @@ class GenerateComposerFile {
 				this.failed.push(plugin);
 			}
 		}
-		return { json: this.composer, failed: this.failed };
+		return this.output();
 	}
 
 	/**
@@ -1563,11 +1566,13 @@ class GenerateComposerFile {
 		// Get original composer file
 		this.composer = await this.get();
 
+		this.removeOldPackages();
+
 		for (const plugin of plugins) {
 			if (this.isPluginIgnored(plugin)) {
-				console.log(`Plugin is ignored: ${plugin}`);
+				this.ignored.push(plugin);
 			} else if (this.isPluginInComposer(plugin)) {
-				console.log(`Plugin already exists in Composer: ${plugin}`);
+				this.exists.push(plugin);
 			} else if (await this.isInternalPlugin(plugin)) {
 				this.addInternalPlugin(plugin);
 			} else if (await this.isWordPressPlugin(plugin)) {
@@ -1576,7 +1581,22 @@ class GenerateComposerFile {
 				this.failed.push(plugin);
 			}
 		}
-		return { json: this.composer, failed: this.failed };
+
+		return this.output();
+	}
+
+	/**
+	 * Generator output
+	 * @returns {object}
+	 */
+	output() {
+		return {
+			json: this.composer,
+			added: this.added,
+			exists: this.exists,
+			ignored: this.ignored,
+			failed: this.failed,
+		};
 	}
 
 	/**
@@ -1653,7 +1673,7 @@ class GenerateComposerFile {
 				url: `https://wpackagist.org`,
 			});
 		}
-
+		this.added.push(plugin);
 		Object.assign(this.composer.require, {
 			[`wpackagist-plugin/${plugin}`]: '*',
 		});
@@ -1672,9 +1692,27 @@ class GenerateComposerFile {
 			type: 'vcs',
 			url: `https://github.com/designcontainer/${plugin}`,
 		});
+		this.added.push(plugin);
 		Object.assign(this.composer.require, {
 			[`designcontainer/${plugin}`]: '*',
 		});
+	}
+
+	/**
+	 * Remove old packages from composer
+	 *
+	 * @returns {void}
+	 */
+	removeOldPackages() {
+		this.addObjectIfMissing('repositories');
+		this.addObjectIfMissing('require');
+		const oldAccounts = ['dctechy', 'designcontaineroslo'];
+		this.composer.repositories = this.composer.repositories.filter(
+			(repo) => !oldAccounts.some((account) => repo.url.includes(account))
+		);
+		this.composer.require = Object.fromEntries(
+			Object.entries(this.composer.require).filter((req) => !oldAccounts.includes(req[0].split('/')[0]))
+		);
 	}
 
 	/**
